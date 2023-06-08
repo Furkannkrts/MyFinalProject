@@ -1,5 +1,6 @@
 ﻿using DataAccsess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace DataAccsess.Concrete.InMemory
 {
     public class InMemoryProductDal : IProductDal
     {
-        List<Product> _products;
+        List<Product> _products;//global değişken tanımladık class içinde metod dışında
         public InMemoryProductDal()//void vs döndürmüyor ve direkt class ismiyle bu sebeple conctructor
         {
             _products = new List<Product>
@@ -30,20 +31,8 @@ namespace DataAccsess.Concrete.InMemory
         }
 
         public void Delete(Product product)
-        {
+        {   
             //LINQ -Language Integrated Query
-
-            ///////////////////////////////////
-            //Product productToDelete = null;
-            //foreach (var p in _products)
-            //{
-            //    if (product.ProductId == product.ProductId)
-            //    {
-            //        productToDelete = p;
-
-            //    }
-
-            //}
             Product productToDelete = _products.SingleOrDefault(p=>p.ProductId==product.ProductId);//singleOrDefault yukarıda ki foreachin aynısını yapar.
             _products.Remove(productToDelete);
         }
@@ -66,6 +55,11 @@ namespace DataAccsess.Concrete.InMemory
         public List<Product> GetAllCategory(int categoryId)
         {
             return _products.Where(p=>p.CategoryId==categoryId).ToList(); 
+        }
+
+        public List<ProductDetailDto> GetProductDetails()
+        {
+            throw new NotImplementedException();
         }
 
         public void Update(Product product)
