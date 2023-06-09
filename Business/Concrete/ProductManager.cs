@@ -2,6 +2,7 @@
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
+using Core.Aspects.Autofac.Caching;
 using Core.Aspects.Autofac.Validation;
 using Core.CrossCottingConcerns.Validation;
 using Core.Utilities.Business;
@@ -39,7 +40,7 @@ namespace Business.Concrete
 
         [SecuredOperation("product.add,admin")]
         [ValidationAspect(typeof(ProductValidator))]
-
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult add(Product product)
         {
             //doğrulamanın yapıldığı en kötü kod yöntemi buradaydı.Validation tool'a taşıdık
@@ -59,7 +60,7 @@ namespace Business.Concrete
             return new SuccessResult(Masseges.ProductAdded);
 
         }
-
+        [CacheAspect]
         public IDataResult<List<Product>> GetAll()
         {
             if (DateTime.Now.Hour == 16)
@@ -75,6 +76,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Product>>(_productDal.GetAll(p => p.CategoryId == id));
         }
 
+        [CacheAspect]
         public IDataResult<Product> GetById(int productId)
         {
             return new SuccessDataResult<Product>(_productDal.Get(p => p.ProductId == productId));//succes data içinde product gönderiyoruz
@@ -96,6 +98,7 @@ namespace Business.Concrete
         }
 
         [ValidationAspect(typeof(ProductValidator))]
+        [CacheRemoveAspect("IProductService.Get")]
         public IResult update(Product product)
         {
             var result=_productDal.GetAll(p=>p.CategoryId==product.CategoryId).Count;
